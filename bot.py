@@ -3,7 +3,7 @@ import os, math, logging, datetime, pytz, logging.config
 from aiohttp import web
 from pyrogram import Client, types
 from database.users_chats_db import db
-from database.ia_filterdb import  Media
+from database.ia_filterdb import Media
 from typing import Union, Optional, AsyncGenerator
 from utils import temp, __repo__, __license__, __copyright__, __version__
 from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_MSG
@@ -49,10 +49,11 @@ class Bot(Client):
         except Exception as e: logging.warning(f"Bot Isn't Able To Send Message To LOG_CHANNEL \n{e}")
         
         if bool(WEB_SUPPORT) is True:
+            port = int(os.environ.get("PORT", 8080))  # Use the PORT environment variable if available, otherwise default to 8080
             app = web.AppRunner(web.Application(client_max_size=30000000))
             await app.setup()
-            await web.TCPSite(app, "0.0.0.0", int(os.environ.get("PORT", 8080))).start()
-            logging.info("Web Response Is Running......🕸️")
+            await web.TCPSite(app, "0.0.0.0", port).start()
+            logging.info(f"Web Response Is Running......🕸️ on port {port}")
             
     async def stop(self, *args):
         await super().stop()
@@ -70,10 +71,4 @@ class Bot(Client):
                 current += 1
 
 
-        
 Bot().run()
-
-
-
-
-
